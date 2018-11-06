@@ -1,17 +1,26 @@
-import { Http, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
+
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+
+
 import { ShoppingCartService } from '../restaurant-detail/shopping-cart/shopping-cart.service';
 import { CartItem } from '../restaurant-detail/shopping-cart/cart-item.model';
-import { Observable } from 'rxjs/Observable';
-import { Order } from './order.model';
-import 'rxjs/add/operator/map';
-import { MEAT_API } from '../app.api';
 
+import { Order, OrderItem } from './order.model';
+
+import { MEAT_API } from '../app.api';
+import {LoginService} from '../security/login/login.service';
 
 @Injectable()
 export class OrderService {
 
-  constructor(private cartService: ShoppingCartService, private http: Http) {}
+  constructor(
+    private cartService: ShoppingCartService,
+    private http: HttpClient,
+    private loginService: LoginService
+  ) {}
 
 
   itemsValue(): number {
@@ -40,14 +49,14 @@ export class OrderService {
 
   checkOrder(order: Order): Observable<string> {
 
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    let headers = new HttpHeaders()
 
-    return this.http.post(`${MEAT_API}/orders`,
-      JSON.stringify(order),
-      new RequestOptions({ headers: headers}))
-      .map(response => response.json())
-      .map(order => order.id);
+    if (this.loginService.isLoggedIn()) {
+      console.log('aqio estamos');
+      headers = headers.set('Authorization', `Beazer ${this.loginService.user.accessToken}`)
+    }
 
+    return this.http.post<Order>(`${MEAT_API}/orders`, order, {headers: headers})
+      .map(order => order.id)
   }
 }
