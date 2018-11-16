@@ -6,7 +6,6 @@ import { Observable } from 'rxjs/Observable';
 import { Restaurant } from './restaurant/restaurant.model';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { ErrorHandler } from '../app.error-handler';
 import { MenuItem } from 'app/restaurant-detail/menu-item/menu-item.model';
 
 
@@ -19,11 +18,11 @@ export class RestaurantsService {
 
     restaurants(search?: string): Observable<Restaurant[]> {
       let params: HttpParams = undefined;
-      if(search) {
+      if (search) {
         params = new HttpParams().append('q', search);
       }
 
-        return this.http.get<Restaurant[]>(`${MEAT_API}/restaurants`, {params: params})
+        return this.http.get<Restaurant[]>(`${MEAT_API}/restaurantss`, {params: params})
     }
 
     restaurantById(id: string): Observable<Restaurant> {

@@ -11,15 +11,14 @@ import { CartItem } from '../restaurant-detail/shopping-cart/cart-item.model';
 import { Order, OrderItem } from './order.model';
 
 import { MEAT_API } from '../app.api';
-import {LoginService} from '../security/login/login.service';
+
 
 @Injectable()
 export class OrderService {
 
   constructor(
     private cartService: ShoppingCartService,
-    private http: HttpClient,
-    private loginService: LoginService
+    private http: HttpClient
   ) {}
 
 
@@ -49,14 +48,9 @@ export class OrderService {
 
   checkOrder(order: Order): Observable<string> {
 
-    let headers = new HttpHeaders()
 
-    if (this.loginService.isLoggedIn()) {
-      console.log('aqio estamos');
-      headers = headers.set('Authorization', `Beazer ${this.loginService.user.accessToken}`)
-    }
 
-    return this.http.post<Order>(`${MEAT_API}/orders`, order, {headers: headers})
+    return this.http.post<Order>(`${MEAT_API}/orders`, order)
       .map(order => order.id)
   }
 }
